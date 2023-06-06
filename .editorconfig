@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# UNT0012: Unused Unity Coroutine
+dotnet_diagnostic.UNT0012.severity = warning

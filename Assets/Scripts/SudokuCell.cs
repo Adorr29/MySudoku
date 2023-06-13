@@ -6,10 +6,13 @@ public class SudokuCell : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private TMP_Text text;
+    [Space]
+    [SerializeField] private GameObject numberButtons;
 
     [HideInInspector] public Vector2Int gridPosition;
 
     public int? number { get; private set; }
+    [HideInInspector] public int expectedNumber;
 
     public Action<SudokuCell, int?> onSetNumber;
 
@@ -17,24 +20,31 @@ public class SudokuCell : MonoBehaviour
     {
         number = null;
 
+        if (GameManager.instance.sudokuGrid.gridIsBuilding)
+            return;
+
         text.text = "";
+
+        numberButtons.SetActive(true);
     }
 
     public void SetNumber(int cellNumber)
     {
         number = cellNumber;
 
+        if (GameManager.instance.sudokuGrid.gridIsBuilding)
+            return;
+
         text.text = number.ToString();
+
+        numberButtons.SetActive(false);
 
         onSetNumber?.Invoke(this, number);
     }
 
-    public void OnClick()
+    public void RemoveCandidateNumber(int candidateNumber)
     {
-        if (number.HasValue)
-            return;
-
-        SetNumber(GameManager.selectedNumber);
+        transform.Find("NumberButtons").Find("NumberButton" + candidateNumber).GetComponentInChildren<TMP_Text>().enabled = false; // tmp // TODO do better
     }
 
     public void BadNumber()

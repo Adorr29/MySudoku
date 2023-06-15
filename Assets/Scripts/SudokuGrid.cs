@@ -10,7 +10,7 @@ public class SudokuGrid : MonoBehaviour
 {
     public SudokuCell[] cells;
 
-    private SudokuCell[,] grid;
+    public SudokuCell[,] grid { get; private set; }
 
     public bool gridIsBuilding { get; private set; }
 
@@ -370,5 +370,23 @@ public class SudokuGrid : MonoBehaviour
                 otherCells[index++] = grid[i, j];
 
         return otherCells;
+    }
+
+    public void Help()
+    {
+        SolvingTechnique[] solvingTechniques = {
+            new FullHouse(this),
+            new LastDigit(this),
+            new HiddenSingle(this),
+            new NakedSingle(this)
+        };
+
+        foreach (SolvingTechnique solvingTechnique in solvingTechniques)
+            if (solvingTechnique.Apply() == true)
+            {
+                Debug.Log(solvingTechnique.GetType());
+
+                return;
+            }
     }
 }

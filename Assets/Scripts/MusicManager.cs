@@ -24,7 +24,7 @@ public class MusicManager : MonoBehaviour
         MusicPlayer.musicSource.Play();
 
         if (musicEnabled)
-            Invoke(nameof(PlayRandomMusic), MusicPlayer.musicSource.clip.length);
+            MusicPlayer.instance.Invoke(nameof(PlayRandomMusic), MusicPlayer.musicSource.clip.length);
     }
 
     private void OnMuteMusicToggle(bool enable)

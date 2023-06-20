@@ -6,7 +6,7 @@ public class MusicPlayer : MonoBehaviour
 
     public static AudioSource musicSource => instance.audioSource;
 
-    private static MusicPlayer instance;
+    public static MusicPlayer instance { get; private set; }
 
     private void Awake()
     {

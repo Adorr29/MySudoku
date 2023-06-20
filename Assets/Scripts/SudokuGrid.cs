@@ -5,7 +5,6 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-//[ExecuteInEditMode]
 public class SudokuGrid : MonoBehaviour
 {
     public SudokuCell[] cells;

@@ -145,7 +145,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3521436657578860815}
   - component: {fileID: 1666828105319174975}
-  - component: {fileID: 8810564964547826392}
   - component: {fileID: 2418941790057673334}
   m_Layer: 5
   m_Name: NumberButton
@@ -183,36 +182,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7462562835871924763}
   m_CullTransparentMesh: 1
---- !u!114 &8810564964547826392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7462562835871924763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &2418941790057673334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,4 +196,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 2816547318121541103}
   cell: {fileID: 0}
+  normalColor: {r: 0, g: 0, b: 0, a: 0.5019608}
+  highlightedColor: {r: 0, g: 0, b: 0, a: 1}
   number: 7

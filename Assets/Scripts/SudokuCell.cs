@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class SudokuCell : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private TMP_Text text;
     [Space]
-    [SerializeField] private GameObject numberButtons;
+    [SerializeField] private GameObject numberButtonsParent;
+    [SerializeField] private NumerButton[] numberButtons;
 
     [HideInInspector] public Vector2Int gridPosition;
 
@@ -23,9 +25,9 @@ public class SudokuCell : MonoBehaviour
         if (GameManager.instance.sudokuGrid.gridIsBuilding)
             return;
 
-        text.text = "";
+        text.text = null;
 
-        numberButtons.SetActive(true);
+        numberButtonsParent.SetActive(true);
     }
 
     public void SetNumber(int cellNumber)
@@ -37,14 +39,19 @@ public class SudokuCell : MonoBehaviour
 
         text.text = number.ToString();
 
-        numberButtons.SetActive(false);
+        numberButtonsParent.SetActive(false);
 
         onSetNumber?.Invoke(this, number);
     }
 
+    public bool NoNumberButtonVisible()
+    {
+        return numberButtons.Any(b => b.isVisible) == false;
+    }
+
     public void RemoveCandidateNumber(int candidateNumber)
     {
-        transform.Find("NumberButtons").Find("NumberButton" + candidateNumber).GetComponentInChildren<TMP_Text>().enabled = false; // tmp // TODO do better
+        numberButtons[candidateNumber - 1].Hide();
     }
 
     public void BadNumber()

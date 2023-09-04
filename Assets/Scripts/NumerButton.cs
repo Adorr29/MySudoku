@@ -6,13 +6,13 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 {
     [SerializeField] private TMP_Text text;
     [Space]
-    [SerializeField] private SudokuCell cell;
+    [SerializeField] private SudokuCellVisual cell;
     [SerializeField] private Color normalColor;
     [SerializeField] private Color highlightedColor;
     [Space]
-    [SerializeField] private int number;
+    [SerializeField] public byte number;
 
-    public bool isVisible { get; private set; } = true;
+    public bool isVisible { get; private set; } = false;
     private bool mouseHover = false;
     private Color targetColor;
 
@@ -25,6 +25,8 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             Show();
         else
             Hide();
+
+        text.color = targetColor;
     }
 
     private void Update()
@@ -44,8 +46,20 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (isVisible || cell.NoNumberButtonVisible() == true)
-                cell.SetNumber(number);
+            if (isVisible || cell.HaveNoNumberButtonVisible() == true)
+            {
+                // tmp fix
+                isVisible = false; 
+                mouseHover = true;
+                UpdateTextColor();
+
+                cell.sudokuCell.SetNumber(number);
+
+                // tmp fix
+                isVisible = false;
+                mouseHover = true;
+                UpdateTextColor();
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -97,7 +111,7 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         {
             if (mouseHover == true)
             {
-                if (cell.NoNumberButtonVisible() == true)
+                if (cell.HaveNoNumberButtonVisible() == true)
                     targetColor = new Color(0, 0, 0, 1); // TODO use param color
                 else
                     targetColor = new Color(0, 0, 0, 0.15f); // TODO use param color

@@ -1,9 +1,10 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public SudokuGrid sudokuGrid; // tmp
+    public SudokuGridVisual sudokuGrid; // tmp
 
     public static GameManager instance { get; private set; }
 
@@ -15,13 +16,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void BackToMenu()

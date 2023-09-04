@@ -1,244 +1,177 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class SudokuGridGenerator : MonoBehaviour
+public class SudokuGridGenerator
 {
-    private class Cell
+    public static int targetDifficulty;
+    public static List<Type> solvingTechniqueTypes = new List<Type>();
+
+    //private SudokuGrid sudokuGrid;
+
+    public static SudokuGrid CreateGrid()
     {
-        public byte? number;
-        public List<byte> possibleNumbers;
-
-        public Cell CreateCopy()
-        { 
-            Cell cell = new Cell();
-
-            cell.number = number;
-            cell.possibleNumbers = new List<byte>(possibleNumbers);
-
-            return cell;
-        }
-
-        public void None() // TODO rename
+        for (int i = 0; i < 100; i++)
         {
-            possibleNumbers = new List<byte>();
+            SudokuGrid sudokuGrid = AttemptCreateGrid();
+
+            if (sudokuGrid != null)
+                return sudokuGrid;
         }
 
-        public void All() // TODO rename
-        {
-            possibleNumbers = new List<byte>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        }
-
-        public void Clear()
-        {
-            number = null;
-
-            All();
-        }
-
-        public void RemoveFromPossibleNumbers(byte numberToRemove)
-        {
-            possibleNumbers.Remove(numberToRemove);
-        }
-
-        public bool HavePossibleNumbers()
-        {
-            return possibleNumbers.Count > 0;
-        }
-
-        public bool HaveOnlyOnePossibleNumber()
-        {
-            return possibleNumbers.Count == 1;
-        }
-
-        public void SetRandomNumberFromPossibleNumbers()
-        {
-            number = possibleNumbers[Random.Range(0, possibleNumbers.Count)];
-        }
-
-        public bool SetNumberIfOnlyOnepossibleNumber()
-        {
-            if (HaveOnlyOnePossibleNumber() == false)
-                return false;
-
-            number = possibleNumbers[0];
-
-            return true;
-        }
+        return null;
     }
 
-    private class Grid
-    { 
-        public Cell[,] cells = new Cell[9, 9];
-
-        public static Grid CreateEmptyGrid()
-        {
-            Grid grid = new Grid();
-
-            for (int i = 0; i < 9; i++)
-                for (int j = 0; j < 9; j++)
-                {
-                    grid.cells[i, j] = new Cell();
-
-                    grid.cells[i, j].All();
-                }
-
-            return grid;
-        }
-
-        public Grid CreateCopy()
-        {
-            Grid grid = new Grid();
-
-            for (int i = 0; i < 9; i++)
-                for (int j = 0; j < 9; j++)
-                    grid.cells[i, j] = cells[i, j].CreateCopy();
-
-            return grid;
-        }
-
-        public void Clear()
-        {
-            foreach (Cell cell in cells)
-                cell.Clear();
-        }
-
-        public void ConstrainNumber(int x, int y, byte number)
-        {
-            // Row
-            for (int i = 0; i < x; i++)
-                cells[i, y].RemoveFromPossibleNumbers(number);
-
-            for (int i = x + 1; i < 9; i++)
-                cells[i, y].RemoveFromPossibleNumbers(number);
-
-            // Column
-            for (int j = 0; j < y; j++)
-                cells[x, j].RemoveFromPossibleNumbers(number);
-
-            for (int j = y + 1; j < 9; j++)
-                cells[x, j].RemoveFromPossibleNumbers(number);
-
-            // Box
-            int boxStartX = x / 3 * 3;
-            int boxStartY = y / 3 * 3;
-
-            for (int i = boxStartX; i < boxStartX + 3; i++)
-                for (int j = boxStartY; j < boxStartY + 3; j++)
-                    if (i != x && j != y)
-                        cells[i, j].RemoveFromPossibleNumbers(number);
-        }
-
-        public void RemoveConstrains()
-        {
-            for (int i = 0; i < 9; i++)
-                for (int j = 0; j < 9; j++)
-                    cells[i, j].All();
-        }
-
-        public void Reconstrain()
-        {
-            RemoveConstrains();
-
-            for (int i = 0; i < 9; i++)
-                for (int j = 0; j < 9; j++)
-                    if (cells[i, j].number != null)
-                        ConstrainNumber(i, j, cells[i, j].number.Value);
-        }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        Grid grid = CreateGrid();
-        PrintGrid(grid);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private Grid CreateGrid()
+    private static SudokuGrid AttemptCreateGrid()
     {
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
-        Grid grid = Grid.CreateEmptyGrid();
+        SudokuGrid sudokuGrid = SudokuGrid.CreateEmptyGrid();
 
-        int attempt = 0;
-
-        timer.Start();
-        while (attempt < 10000)
-        {
-            attempt++;
-
-            if (AttemptFillGrid(grid) == true)
-                break;
-
-            grid.Clear();
-        }
+        timer.Restart();
+        bool gridIsFilled = FillGrid(sudokuGrid);
         timer.Stop();
 
-        Debug.Log("Attempt : " + attempt + ", Time : " + timer.Elapsed.ToString());
-
-        RemoveCells(grid);
-
-        return grid;
-    }
-
-    void RemoveCells(Grid grid)
-    {
-        Vector2Int[] cellPositions = new Vector2Int[9 * 9];
+        Debug.Log("FillGrid time : " + timer.Elapsed.ToString());
+        
+        if (gridIsFilled == false)
+            return null;
 
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
-                cellPositions[i * 9 + j] = new Vector2Int(i, j);
+                sudokuGrid.grid[i, j].expectedNumber = sudokuGrid.grid[i, j].number.Value;
 
-        cellPositions = cellPositions.OrderBy(p => Random.value).ToArray();
+        timer.Restart();
+        int solutionDifficulty = RemoveCells(sudokuGrid);
+        timer.Stop();
 
-        foreach (Vector2Int cellPosition in cellPositions)
+        Debug.Log("RemoveCells time : " + timer.Elapsed.ToString());
+
+        int difficultyDifference = Mathf.Abs(solutionDifficulty - targetDifficulty);
+
+        Debug.Log("difficultyDifference : " + difficultyDifference + ", must be <= " + 500);
+
+        if (difficultyDifference > 500)
+            return null;
+
+        return sudokuGrid;
+    }
+
+    private static int RemoveCells(SudokuGrid sudokuGrid)
+    {
+        int? solutionDifficulty = null;
+        IEnumerable<SudokuCell> cells = sudokuGrid.GetCells().OrderBy(p => UnityEngine.Random.value);
+
+        foreach (SudokuCell cell in cells)
         {
-            byte cellNumber = grid.cells[cellPosition.x, cellPosition.y].number.Value;
+            byte cellNumber = cell.number.Value;
 
-            grid.cells[cellPosition.x, cellPosition.y].number = null;
+            sudokuGrid.ClearCellNumber(cell);
 
-            grid.Reconstrain();
+            int? currentSolutionDifficulty = Solve(sudokuGrid.CreateCopy());
 
-            byte solutionCount = Solve();
-
-            if (solutionCount > 1)
+            if (currentSolutionDifficulty.HasValue == false)
             {
-                grid.cells[cellPosition.x, cellPosition.y].number = cellNumber;
+                sudokuGrid.SetNumberAndUpdateCandidate(cell, cellNumber);
+                continue;
+            }
+
+            if (solutionDifficulty.HasValue == false || Mathf.Abs(currentSolutionDifficulty.Value - targetDifficulty) < Mathf.Abs(solutionDifficulty.Value - targetDifficulty))
+            {
+                solutionDifficulty = currentSolutionDifficulty;
+            }
+            else
+            {
+                sudokuGrid.SetNumberAndUpdateCandidate(cell, cellNumber);
             }
         }
+
+        return solutionDifficulty.Value;
     }
 
-    private byte Solve()
+    private static int? Solve(SudokuGrid sudokuGrid)
     {
-        return 1;
+        int solutionDifficulty = 0;
+
+        SolvingTechnique[] solvingTechniques = new SolvingTechnique[solvingTechniqueTypes.Count];
+
+        for (int i = 0; i < solvingTechniqueTypes.Count; i++)
+        {
+            solvingTechniques[i] = (SolvingTechnique)Activator.CreateInstance(solvingTechniqueTypes[i], sudokuGrid);
+        }
+
+        solvingTechniques = solvingTechniques.OrderBy(t => t.difficulty).ToArray();
+
+        while (SudokuGridIsSolved(sudokuGrid) == false)
+        {
+            int? appliedSolvingTechniqueDifficulty = TryToApplySolvingTechniques(solvingTechniques);
+
+            if (appliedSolvingTechniqueDifficulty == null)
+                return null;
+
+            solutionDifficulty += appliedSolvingTechniqueDifficulty.Value;
+        }
+
+        return solutionDifficulty;
     }
 
-    private bool AttemptFillGrid(Grid grid)
+    private static int? TryToApplySolvingTechniques(SolvingTechnique[] solvingTechniques)
+    {
+        foreach (SolvingTechnique solvingTechnique in solvingTechniques)
+            if (solvingTechnique.Find() == true)
+            {
+                solvingTechnique.Apply();
+
+                return solvingTechnique.difficulty;
+            }
+
+        return null;
+    }
+
+    private static bool SudokuGridIsSolved(SudokuGrid sudokuGrid)
+    {
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                if (sudokuGrid.grid[i, j].number == null)
+                    return false;
+
+        return true;
+    }
+
+    private static bool FillGrid(SudokuGrid sudokuGrid)
+    {
+        for (int i = 0; i < 10000; i++)
+        {
+            if (AttemptFillGrid(sudokuGrid) == true)
+                return true;
+
+            sudokuGrid.Clear();
+        }
+
+        Debug.LogWarning("FillGrid faild !");
+
+        return false;
+    }
+
+    private static bool AttemptFillGrid(SudokuGrid sudokuGrid)
     {
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
             {
-                Cell cell = grid.cells[i, j];
+                SudokuCell cell = sudokuGrid.grid[i, j];
 
-                if (cell.HavePossibleNumbers() == false)
+                if (cell.HaveCandidateNumbers() == false)
                     return false;
 
-                cell.SetRandomNumberFromPossibleNumbers();
-
-                grid.ConstrainNumber(i, j, cell.number.Value);
+                byte randomCandidateNumber = cell.GetRandomCandidateNumber();
+                sudokuGrid.SetNumberAndUpdateCandidate(cell, randomCandidateNumber);
             }
 
         return true;
     }
 
-    private void PrintGrid(Grid grid)
+    public static void PrintGrid(SudokuGrid sudokuGrid)
     {
         string str = "";
 
@@ -248,10 +181,10 @@ public class SudokuGridGenerator : MonoBehaviour
             {
                 str += "   ";
 
-                if (grid.cells[i, j].number == null)
+                if (sudokuGrid.grid[i, j].number == null)
                     str += "_";
                 else
-                    str += grid.cells[i, j].number.ToString();
+                    str += sudokuGrid.grid[i, j].number.ToString();
             }
 
             str += "\n";

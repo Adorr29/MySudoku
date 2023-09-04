@@ -1,62 +1,83 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEngine;
+
 public class LastDigit : SolvingTechnique
 {
+    public override int difficulty => 50;
+
+    private SudokuCell[] sameNumberCells;
+    private SudokuCell findCell;
+    private byte findNumber;
+
     public LastDigit(SudokuGrid sudokuGrid) : base(sudokuGrid)
     {
     }
 
-    public override bool Apply()
+    public override bool Find()
     {
-        byte[] numberCount = new byte[9];
+        List<SudokuCell>[] sameNumberCellsList = new List<SudokuCell>[9];
 
-        foreach (SudokuCell cell in sudokuGrid.cells)
+        for (int i = 0; i < 9; i++)
+            sameNumberCellsList[i] = new List<SudokuCell>();
+
+        foreach (SudokuCell cell in sudokuGrid.GetCells())
             if (cell.number != null)
-                numberCount[cell.number.Value - 1]++;
+                sameNumberCellsList[cell.number.Value - 1].Add(cell);
 
-        for (byte i = 0; i < 9; i++)
-            if (numberCount[i] == 8)
+        for (int i = 0; i < 9; i++)
+            if (sameNumberCellsList[i].Count == 8)
             {
-                FindAndSetNumber((byte)(i + 1));
-
+                sameNumberCells = sameNumberCellsList[i].ToArray();
+                findCell = FindLastCell();
+                findNumber = (byte)(i + 1);
                 return true;
             }
 
         return false;
     }
 
-    private void FindAndSetNumber(byte number)
+    private SudokuCell FindLastCell()
     {
-        const byte undefined = 10;
+        int x = Enumerable.Range(0, 9).Except(sameNumberCells.Select(c => c.gridPosition.x)).Single();
+        int y = Enumerable.Range(0, 9).Except(sameNumberCells.Select(c => c.gridPosition.y)).Single();
 
-        byte gridPositionX = undefined;
-        byte gridPositionY = undefined;
+        return sudokuGrid.grid[x, y];
+    }
 
-        for (byte n = 0; n < 9; n++)
+    public override IEnumerator DisplayHelp()
+    {
+        isAnimationPlaying = true;
+        SudokuHelp.currentSolvingTechnique = this;
+
+        Color numberColor = Color.blue;
+        Color cellColor = Color.green;
+        Color hintBackgroundColor = new Color(1, 0.5f, 0.5f);
+
+        SudokuHelp.SetTitle("Last digit");
+
+        string description = $"Il y a exactement huit <color=#{numberColor.ToHexString()}>{findNumber}</color> dans la grille.\nIl ne reste donc plus qu'un {findNumber} à mettre dans de la grille, et cette <color=#{cellColor.ToHexString()}>case</color> est le seul emplacement possible.";
+        SudokuHelp.SetDescription(description);
+
+        foreach (SudokuCell sameNumberCell in sameNumberCells.OrderBy(p => Random.value))
         {
-            if (gridPositionX == undefined && NumberIsInColum(n, number) == false)
-                gridPositionX = n;
+            SudokuHelp.ColorizeCellNumber(numberColor, sameNumberCell);
 
-            if (gridPositionY == undefined && NumberIsInRow(n, number) == false)
-                gridPositionY = n;
+            SudokuHelp.ColorizeArea(hintBackgroundColor, new RectInt(sameNumberCell.gridPosition.x, 0, 1, 9));
+            SudokuHelp.ColorizeArea(hintBackgroundColor, new RectInt(0, sameNumberCell.gridPosition.y, 9, 1));
+
+            yield return Wait(1f);
         }
 
-        sudokuGrid.grid[gridPositionX, gridPositionY].SetNumber(number);
+        SudokuHelp.ColorizeCellFrame(cellColor, findCell);
+
+        isAnimationPlaying = false;
     }
 
-    private bool NumberIsInRow(byte columnIndex, byte number)
+    public override void Apply()
     {
-        for (byte i = 0; i < 9; i++)
-            if (sudokuGrid.grid[i, columnIndex].number == number)
-                return true;
-
-        return false;
-    }
-
-    private bool NumberIsInColum(byte columnIndex, byte number)
-    {
-        for (byte j = 0; j < 9; j++)
-            if (sudokuGrid.grid[columnIndex, j].number == number)
-                return true;
-
-        return false;
+        sudokuGrid.SetNumberAndUpdateCandidate(findCell, findNumber);
     }
 }

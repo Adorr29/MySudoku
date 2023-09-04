@@ -1,73 +1,104 @@
 using System;
-using System.Linq;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class SudokuCell : MonoBehaviour
+public class SudokuCell
 {
-    [SerializeField] private Animator animator;
-    [SerializeField] private TMP_Text text;
-    [Space]
-    [SerializeField] private GameObject numberButtonsParent;
-    [SerializeField] private NumerButton[] numberButtons;
+    public SudokuGrid sudokuGrid;
+    public Vector2Int gridPosition;
+    public byte? number;
+    public byte expectedNumber;
+    public List<byte> candidateNumbers;
 
-    [HideInInspector] public Vector2Int gridPosition;
+    public Action<SudokuCell> onRemoveNumber;
+    public Action<SudokuCell, byte> onSetNumber;
+    public Action<SudokuCell, byte> onAddCandidateNumber;
+    public Action<SudokuCell, byte> onRemoveCandidateNumber;
 
-    public int? number { get; private set; }
-    [HideInInspector] public int expectedNumber;
+    public SudokuCell CreateCopy()
+    {
+        SudokuCell cell = new SudokuCell();
 
-    public Action<SudokuCell, int?> onSetNumber;
+        cell.sudokuGrid = null;
+        cell.gridPosition = gridPosition;
+        cell.number = number;
+        cell.expectedNumber = expectedNumber;
+        cell.candidateNumbers = new List<byte>(candidateNumbers);
 
-    public void ClearNumber()
+        return cell;
+    }
+
+    public void ClearCandidateNumbers()
+    {
+        candidateNumbers = new List<byte>();
+    }
+
+    public void SetAllCandidateNumbers()
+    {
+        candidateNumbers = new List<byte>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    }
+
+    public void Clear()
     {
         number = null;
 
-        if (GameManager.instance.sudokuGrid.gridIsBuilding)
-            return;
-
-        text.text = null;
-
-        numberButtonsParent.SetActive(true);
+        SetAllCandidateNumbers();
     }
 
-    public void SetNumber(int cellNumber)
+    public void RemoveNumber()
     {
+        number = null;
+
+        // How manage candidate numbers here ??
+
+        onRemoveNumber?.Invoke(this);
+    }
+
+    public void SetNumber(byte cellNumber)
+    { 
         number = cellNumber;
 
-        if (GameManager.instance.sudokuGrid.gridIsBuilding)
-            return;
+        // meybe cell RemoveCandidateNumberFromAllIntersectingCells here
 
-        text.text = number.ToString();
-
-        numberButtonsParent.SetActive(false);
-
-        onSetNumber?.Invoke(this, number);
+        onSetNumber?.Invoke(this, cellNumber);
     }
 
-    public bool NoNumberButtonVisible()
+    public void AddToCandidateNumbers(byte numberToAdd)
     {
-        return numberButtons.Any(b => b.isVisible) == false;
+        candidateNumbers.Add(numberToAdd);
+
+        onAddCandidateNumber?.Invoke(this, numberToAdd);
     }
 
-    public void RemoveCandidateNumber(int candidateNumber)
+    public void RemoveFromCandidateNumbers(byte numberToRemove)
     {
-        numberButtons[candidateNumber - 1].Hide();
+        candidateNumbers.Remove(numberToRemove);
+
+        onRemoveCandidateNumber?.Invoke(this, numberToRemove);
     }
 
-    public void BadNumber()
+    public bool HaveCandidateNumbers()
     {
-        animator.Play("BadNumber", 0, 0);
-
-        Invoke(nameof(ClearNumber), 0.5f);
+        return candidateNumbers.Count > 0;
     }
 
-    public void GoodNumber()
+    public bool HaveOnlyOneCandidateNumber()
     {
-        animator.Play("GoodNumber", 0, 0);
+        return candidateNumbers.Count == 1;
     }
 
-    public void HighLightCell()
+    public byte GetRandomCandidateNumber()
     {
-        animator.Play("HighLightCell", 0, 0);
+        return candidateNumbers[UnityEngine.Random.Range(0, candidateNumbers.Count)];
     }
+
+    /*public bool SetNumberIfOnlyOneCandidateNumber()
+    {
+        if (HaveOnlyOneCandidateNumber() == false)
+            return false;
+
+        number = candidateNumbers[0];
+
+        return true;
+    }*/
 }

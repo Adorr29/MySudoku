@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LastDigit : SolvingTechnique
@@ -58,7 +57,7 @@ public class LastDigit : SolvingTechnique
 
         SudokuHelp.SetTitle("Last digit");
 
-        string description = $"Il y a exactement huit <color=#{numberColor.ToHexString()}>{findNumber}</color> dans la grille.\nIl ne reste donc plus qu'un {findNumber} à mettre dans de la grille, et cette <color=#{cellColor.ToHexString()}>case</color> est le seul emplacement possible.";
+        string description = $"Il y a exactement huit <color=#{numberColor.ToHtmlStringRGB()}>{findNumber}</color> dans la grille.\nIl ne reste donc plus qu'un {findNumber} à mettre dans de la grille, et cette <color=#{cellColor.ToHtmlStringRGB()}>case</color> est le seul emplacement possible.";
         SudokuHelp.SetDescription(description);
 
         foreach (SudokuCell sameNumberCell in sameNumberCells.OrderBy(p => Random.value))

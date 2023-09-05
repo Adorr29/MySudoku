@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class HiddenSingle : SolvingTechnique
@@ -173,7 +172,7 @@ public class HiddenSingle : SolvingTechnique
             houseCells = sudokuGrid.GetCellsInBox(findCell.gridPosition);
         }
 
-        string description = $"Cette <color=#{cellColor.ToHexString()}>case</color> est la seule case pouvant contenir un {findNumber} dans {word1} <color=#{houseBackbroundColor.WithAlpha(1).ToHexString()}>{word2}</color>.";
+        string description = $"Cette <color=#{cellColor.ToHtmlStringRGB()}>case</color> est la seule case pouvant contenir un {findNumber} dans {word1} <color=#{houseBackbroundColor.ToHtmlStringRGB()}>{word2}</color>.";
         SudokuHelp.SetDescription(description);
 
         foreach (SudokuCell houseCell in houseCells)

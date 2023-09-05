@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 enum HouseType
@@ -175,7 +174,7 @@ public class FullHouse : SolvingTechnique
             word2 = "bloc";
         }
 
-        string description = $"Il ne manque plus que un chiffre dans {word1} <color=#{backbroundColor.WithAlpha(1).ToHexString()}>{word2}</color>.\nCela ne laisse plus qu'un chiffre possible pour le dernier emplacement.";
+        string description = $"Il ne manque plus que un chiffre dans {word1} <color=#{backbroundColor.ToHtmlStringRGB()}>{word2}</color>.\nCela ne laisse plus qu'un chiffre possible pour le dernier emplacement.";
         SudokuHelp.SetDescription(description);
 
         foreach (SudokuCell houseCell in houseCells)

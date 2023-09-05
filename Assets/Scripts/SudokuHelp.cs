@@ -29,7 +29,8 @@ public class SudokuHelp : MonoBehaviour
 
     public static void Clear()
     {
-        currentSolvingTechnique.skipAnimation = true;
+        if (currentSolvingTechnique != null)
+            currentSolvingTechnique.skipAnimation = true;
         currentSolvingTechnique = null;
 
         instance.titleText.text = null;

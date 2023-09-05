@@ -131,7 +131,7 @@ public class SudokuHelp : MonoBehaviour
 
     private static SudokuCellVisual GetCellVisualFromCell(Vector2Int gridPosition)
     {
-        SudokuCellVisual cellVisual = GameManager.instance.sudokuGrid.visualGrid[gridPosition.x, gridPosition.y];
+        SudokuCellVisual cellVisual = GameManager.instance.sudokuGridVisual.visualGrid[gridPosition.x, gridPosition.y];
 
         return cellVisual;
     }

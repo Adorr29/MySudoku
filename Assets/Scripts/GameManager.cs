@@ -1,10 +1,12 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Animator transitionsAnimator;
-    public SudokuGridVisual sudokuGrid; // tmp
+    public SudokuGridVisual sudokuGridVisual; // tmp
 
     public static GameManager instance { get; private set; }
 
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        GenerateSudokuGrid();
+
         transitionsAnimator.Play("TransitionIn");
     }
 
@@ -35,5 +39,24 @@ public class GameManager : MonoBehaviour
     private void LoadMenuScene()
     {
         SceneManager.LoadScene("Menu");
+    }
+
+    private void GenerateSudokuGrid()
+    {
+        SudokuGridGenerator.targetDifficulty = PlayerPrefs.GetInt("Difficulty", 1200);
+        SudokuGridGenerator.solvingTechniqueTypes = new List<Type> {
+            typeof(LastDigit),
+            typeof(FullHouse),
+            typeof(HiddenSingle),
+            typeof(NakedSingle)
+        };
+
+        SudokuGrid sudokuGrid = SudokuGridGenerator.CreateGrid();
+
+        sudokuGrid.ClearAllCandidateNumbers();
+
+        SudokuGridGenerator.PrintGrid(sudokuGrid); // tmp
+
+        sudokuGridVisual.Init(sudokuGrid);
     }
 }

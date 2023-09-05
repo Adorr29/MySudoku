@@ -1793,7 +1793,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionsAnimator: {fileID: 403441403}
-  sudokuGrid: {fileID: 321140258}
+  sudokuGridVisual: {fileID: 321140258}
 --- !u!4 &94000274
 Transform:
   m_ObjectHideFlags: 0

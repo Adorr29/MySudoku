@@ -28,32 +28,15 @@ public class SudokuGridVisual : MonoBehaviour
             }
     }
 
-    private void Start()
-    {
-        Generate();
-    }
-
     public IEnumerable<SudokuCellVisual> GetCellVisuals()
     {
         foreach (SudokuCellVisual cell in visualGrid)
             yield return cell;
     }
 
-    public void Generate()
+    public void Init(SudokuGrid grid)
     {
-        SudokuGridGenerator.targetDifficulty = PlayerPrefs.GetInt("Difficulty", 1200);
-        SudokuGridGenerator.solvingTechniqueTypes = new List<Type> {
-            typeof(LastDigit),
-            typeof(FullHouse),
-            typeof(HiddenSingle),
-            typeof(NakedSingle)
-        };
-
-        sudokuGrid = SudokuGridGenerator.CreateGrid();
-
-        sudokuGrid.ClearAllCandidateNumbers();
-
-        SudokuGridGenerator.PrintGrid(sudokuGrid); // tmp
+        sudokuGrid = grid;
 
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)

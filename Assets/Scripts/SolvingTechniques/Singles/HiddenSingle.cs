@@ -172,7 +172,7 @@ public class HiddenSingle : SolvingTechnique
             houseCells = sudokuGrid.GetCellsInBox(findCell.gridPosition);
         }
 
-        string description = $"Cette <color=#{cellColor.ToHtmlStringRGB()}>case</color> est la seule case pouvant contenir un {findNumber} dans {word1} <color=#{houseBackbroundColor.ToHtmlStringRGB()}>{word2}</color>.";
+        string description = $"Cette <color=#{cellColor.ToHtmlStringRGB()}>case</color> est la seule case pouvant contenir un {findNumber} dans {word1} <color=#{houseBackbroundColor.ToHtmlStringRGB()}>{word2}</color>.\nToutes les autres cases vides sont en intersection avec d'autre <color=#{hintCellNumberColor.ToHtmlStringRGB()}>{findNumber}</color>.";
         SudokuHelp.SetDescription(description);
 
         foreach (SudokuCell houseCell in houseCells)

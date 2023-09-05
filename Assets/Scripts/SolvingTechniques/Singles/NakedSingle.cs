@@ -48,7 +48,7 @@ public class NakedSingle : SolvingTechnique
 
         SudokuHelp.SetTitle("Naked single");
 
-        string description = $"Il y a huit <color=#{numberColor.ToHtmlStringRGB()}>chiffres différents</color> dans ligne, colonne et bloc.\nCela ne laisse plus qu'une possibilé pour cette <color=#{cellColor.ToHtmlStringRGB()}>case</color>.";
+        string description = $"Il y a huit <color=#{numberColor.ToHtmlStringRGB()}>chiffres différents</color> dans la ligne, la colonne et le bloc en intersection avec cette <color=#{cellColor.ToHtmlStringRGB()}>case</color>.\nCela ne laisse plus qu'un chiffre possible pour cette <color=#{cellColor.ToHtmlStringRGB()}>case</color>.";
         SudokuHelp.SetDescription(description);
 
         IEnumerable<SudokuCell> intersectingCells = sudokuGrid.GetIntersectingCells(findCell.gridPosition);

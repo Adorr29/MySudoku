@@ -29,6 +29,7 @@ public class SudokuHelp : MonoBehaviour
 
     public static void Clear()
     {
+        currentSolvingTechnique.skipAnimation = true;
         currentSolvingTechnique = null;
 
         instance.titleText.text = null;
@@ -55,16 +56,25 @@ public class SudokuHelp : MonoBehaviour
 
     public static void SetTitle(string description)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         instance.titleText.text = description;
     }
 
     public static void SetDescription(string title)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         instance.descriptionText.text = title;
     }
 
     public static void ColorizeCellNumber(Color color, SudokuCell cell)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         SudokuCellVisual cellVisual = GetCellVisualFromCell(cell);
 
         cellVisual.targetColor = color;
@@ -74,6 +84,9 @@ public class SudokuHelp : MonoBehaviour
 
     public static void ColorizeCellFrame(Color color, SudokuCell cell)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         SudokuCellVisual cellVisual = GetCellVisualFromCell(cell);
 
         Color startColor = color;
@@ -85,6 +98,9 @@ public class SudokuHelp : MonoBehaviour
 
     public static void ColorizeCellBackground(Color color, SudokuCell cell)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         ColorAnimation cellBackground = instance.cellBackgroundContainer.cellBackgroundGrid[cell.gridPosition.x, cell.gridPosition.y];
 
         Color startColor = color;
@@ -96,6 +112,9 @@ public class SudokuHelp : MonoBehaviour
 
     public static void ColorizeArea(Color color, RectInt areaRect)
     {
+        if (currentSolvingTechnique == null)
+            return;
+
         ColorAnimation area = Instantiate(instance.areaPrefab, instance.areaContainer);
         RectTransform areaRectTransform = area.GetComponent<RectTransform>();
 
@@ -120,7 +139,10 @@ public class SudokuHelp : MonoBehaviour
     }
 
     public static void ColorizeCellCandidateNumber(Color color, SudokuCell cell, byte candidateNumber)
-    { 
+    {
+        if (currentSolvingTechnique == null)
+            return;
+
         // TODO
     }
 

@@ -58,7 +58,16 @@ public class SudokuGridVisual : MonoBehaviour
 
         if (sudokuGridIsCompleated == true)
         {
-            StartCoroutine(CompleatedAnimation(GetCellVisuals().ToList()));
+            List<SudokuCellVisual> incorrectCells = GetIncorrectCells();
+
+            if (incorrectCells.Count == 0)
+            {
+                StartCoroutine(CompleatedAnimation(GetCellVisuals().ToList()));
+                GameManager.instance.Invoke(nameof(GameManager.instance.BackToMenu), 3);
+            }
+            else
+                StartCoroutine(RemoveIncorrectCells(incorrectCells));
+
             return;
         }
 

@@ -5,25 +5,32 @@ using UnityEngine;
 
 public class SudokuGridGenerator
 {
-    public static int targetDifficulty;
-    public static List<Type> solvingTechniqueTypes = new List<Type>();
-
-    //private SudokuGrid sudokuGrid;
-
-    public static SudokuGrid CreateGrid()
+    public static SudokuGrid CreateGrid(int targetDifficulty)
     {
+        List<Type> solvingTechniqueTypes = new List<Type> {
+            typeof(LastDigit),
+            typeof(FullHouse),
+            typeof(HiddenSingle),
+            typeof(NakedSingle)
+        };
+
+        int solvingTechniqueCount = 1;
+
         for (int i = 0; i < 100; i++)
         {
-            SudokuGrid sudokuGrid = AttemptCreateGrid();
+            SudokuGrid sudokuGrid = AttemptCreateGrid(targetDifficulty, solvingTechniqueTypes.GetRange(0, solvingTechniqueCount));
 
             if (sudokuGrid != null)
                 return sudokuGrid;
+
+            if (solvingTechniqueCount < solvingTechniqueTypes.Count)
+                solvingTechniqueCount++;
         }
 
         return null;
     }
 
-    private static SudokuGrid AttemptCreateGrid()
+    private static SudokuGrid AttemptCreateGrid(int targetDifficulty, List<Type> solvingTechniqueTypes)
     {
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
@@ -34,7 +41,7 @@ public class SudokuGridGenerator
         timer.Stop();
 
         Debug.Log("FillGrid time : " + timer.Elapsed.ToString());
-        
+
         if (gridIsFilled == false)
             return null;
 
@@ -43,7 +50,7 @@ public class SudokuGridGenerator
                 sudokuGrid.grid[i, j].expectedNumber = sudokuGrid.grid[i, j].number.Value;
 
         timer.Restart();
-        int solutionDifficulty = RemoveCells(sudokuGrid);
+        int solutionDifficulty = RemoveCells(sudokuGrid, targetDifficulty, solvingTechniqueTypes);
         timer.Stop();
 
         Debug.Log("RemoveCells time : " + timer.Elapsed.ToString());
@@ -58,7 +65,7 @@ public class SudokuGridGenerator
         return sudokuGrid;
     }
 
-    private static int RemoveCells(SudokuGrid sudokuGrid)
+    private static int RemoveCells(SudokuGrid sudokuGrid, int targetDifficulty, List<Type> solvingTechniqueTypes)
     {
         int? solutionDifficulty = null;
         IEnumerable<SudokuCell> cells = sudokuGrid.GetCells().OrderBy(p => UnityEngine.Random.value);
@@ -69,7 +76,7 @@ public class SudokuGridGenerator
 
             sudokuGrid.ClearCellNumber(cell);
 
-            int? currentSolutionDifficulty = Solve(sudokuGrid.CreateCopy());
+            int? currentSolutionDifficulty = Solve(sudokuGrid.CreateCopy(), solvingTechniqueTypes);
 
             if (currentSolutionDifficulty.HasValue == false)
             {
@@ -90,7 +97,7 @@ public class SudokuGridGenerator
         return solutionDifficulty.Value;
     }
 
-    private static int? Solve(SudokuGrid sudokuGrid)
+    private static int? Solve(SudokuGrid sudokuGrid, List<Type> solvingTechniqueTypes)
     {
         int solutionDifficulty = 0;
 

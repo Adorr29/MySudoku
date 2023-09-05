@@ -43,15 +43,9 @@ public class GameManager : MonoBehaviour
 
     private void GenerateSudokuGrid()
     {
-        SudokuGridGenerator.targetDifficulty = PlayerPrefs.GetInt("Difficulty", 1200);
-        SudokuGridGenerator.solvingTechniqueTypes = new List<Type> {
-            typeof(LastDigit),
-            typeof(FullHouse),
-            typeof(HiddenSingle),
-            typeof(NakedSingle)
-        };
+        int targetDifficulty = PlayerPrefs.GetInt("Difficulty", 1200);
 
-        SudokuGrid sudokuGrid = SudokuGridGenerator.CreateGrid();
+        SudokuGrid sudokuGrid = SudokuGridGenerator.CreateGrid(targetDifficulty);
 
         sudokuGrid.ClearAllCandidateNumbers();
 

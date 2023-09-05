@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    [SerializeField] private Animator transitionsAnimator;
+
     private static MenuManager instance;
 
     private void Awake()
@@ -13,7 +15,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        transitionsAnimator.Play("TransitionIn");
     }
 
     // Update is called once per frame
@@ -23,6 +25,13 @@ public class MenuManager : MonoBehaviour
     }
 
     public void RunGame()
+    {
+        transitionsAnimator.Play("TransitionOut");
+
+        Invoke(nameof(LoadGameScene), 1);
+    }
+
+    private void LoadGameScene()
     {
         SceneManager.LoadScene("Game");
     }

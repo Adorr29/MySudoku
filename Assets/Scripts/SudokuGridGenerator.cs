@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class SudokuGridGenerator
 {
+    public static List<Type> solvingTechniqueTypes => new List<Type> {
+        typeof(LastDigit),
+        typeof(FullHouse),
+        typeof(HiddenSingle),
+        typeof(NakedSingle)
+    };
+
     public static SudokuGrid CreateGrid(int targetDifficulty)
     {
-        List<Type> solvingTechniqueTypes = new List<Type> {
-            typeof(LastDigit),
-            typeof(FullHouse),
-            typeof(HiddenSingle),
-            typeof(NakedSingle)
-        };
-
         int solvingTechniqueCount = 1;
 
         for (int i = 0; i < 100; i++)

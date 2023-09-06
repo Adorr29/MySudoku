@@ -139,12 +139,11 @@ public class SudokuGridVisual : MonoBehaviour
             return;
         }
 
-        SolvingTechnique[] solvingTechniques = {
-            new LastDigit(sudokuGrid),
-            new FullHouse(sudokuGrid),
-            new HiddenSingle(sudokuGrid),
-            new NakedSingle(sudokuGrid)
-        };
+        SolvingTechnique[] solvingTechniques = new SolvingTechnique[SudokuGridGenerator.solvingTechniqueTypes.Count];
+        for (int i = 0; i < SudokuGridGenerator.solvingTechniqueTypes.Count; i++)
+        {
+            solvingTechniques[i] = (SolvingTechnique)Activator.CreateInstance(SudokuGridGenerator.solvingTechniqueTypes[i], sudokuGrid);
+        }
         solvingTechniques = solvingTechniques.OrderBy(t => t.difficulty).ToArray();
 
         sudokuGrid.RecalculateCandidateNumbersForAllCells();

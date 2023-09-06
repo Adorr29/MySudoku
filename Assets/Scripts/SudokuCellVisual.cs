@@ -12,7 +12,7 @@ public class SudokuCellVisual : MonoBehaviour
     [SerializeField] public ColorAnimation frame;
     [Space]
     [SerializeField] private GameObject numberButtonsParent;
-    [SerializeField] private NumerButton[] numberButtons;
+    [SerializeField] private NumberButton[] numberButtons;
 
     [HideInInspector] public Vector2Int gridPosition;
     [HideInInspector] public Color targetColor;

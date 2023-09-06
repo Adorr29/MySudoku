@@ -16,6 +16,11 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     private bool mouseHover = false;
     private Color targetColor;
 
+    private void OnEnable()
+    {
+        text.color = new Color(0, 0, 0, 0);
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -47,19 +52,7 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (isVisible || cell.HaveNoNumberButtonVisible() == true)
-            {
-                // tmp fix
-                isVisible = false; 
-                mouseHover = true;
-                UpdateTextColor();
-
-                cell.sudokuCell.SetNumber(number);
-
-                // tmp fix
-                isVisible = false;
-                mouseHover = true;
-                UpdateTextColor();
-            }
+                SetNumber();
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -68,6 +61,15 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             else
                 Show();
         }
+    }
+
+    private void SetNumber()
+    {
+        mouseHover = false;
+
+        UpdateTextColor();
+
+        cell.sudokuCell.SetNumber(number);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -114,7 +116,7 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
                 if (cell.HaveNoNumberButtonVisible() == true)
                     targetColor = new Color(0, 0, 0, 1); // TODO use param color
                 else
-                    targetColor = new Color(0, 0, 0, 0.15f); // TODO use param color
+                    targetColor = new Color(0, 0, 0, 0.25f); // TODO use param color
             }
             else
                 targetColor.a = 0;

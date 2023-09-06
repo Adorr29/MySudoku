@@ -51,8 +51,7 @@ public class NumerButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (isVisible || cell.HaveNoNumberButtonVisible() == true)
-                SetNumber();
+            SetNumber();
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {

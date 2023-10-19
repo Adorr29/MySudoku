@@ -1049,10 +1049,10 @@ RectTransform:
   m_Father: {fileID: 1307165722}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.77087784, y: 0.19990316}
-  m_AnchorMax: {x: 0.96630853, y: 0.79397327}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.2}
+  m_AnchorMax: {x: 0.5, y: 0.8}
+  m_AnchoredPosition: {x: 718.17, y: 0}
+  m_SizeDelta: {x: 379, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &49331451
 MonoBehaviour:
@@ -1066,6 +1066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b12fa1121cff05f42ac5c73cec5499ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sudokuGrid: {fileID: 321140255}
   cellBackgroundContainer: {fileID: 259247464}
   areaContainer: {fileID: 758226087}
   areaPrefab: {fileID: 2572588350853697990, guid: 3364d46ae7cd3fb44b866ef1f17ef211, type: 3}

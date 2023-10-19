@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SudokuHelp : MonoBehaviour
 {
+    [SerializeField] private RectTransform sudokuGrid;
     [SerializeField] private CellBackgroundContainer cellBackgroundContainer;
     [SerializeField] private RectTransform areaContainer;
     [SerializeField] private ColorAnimation areaPrefab;
@@ -25,6 +25,28 @@ public class SudokuHelp : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
+        RepositionHelp();
+    }
+
+    private void RepositionHelp()
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        RectTransform rectTransformParent = rectTransform.parent.GetComponent<RectTransform>();
+
+        float rightSpaceWidth = rectTransformParent.rect.max.x - sudokuGrid.rect.max.x;
+        float rightSpaceCenter = (rectTransformParent.rect.max.x + sudokuGrid.rect.max.x) / 2;
+
+        Vector2 anchoredPosition = rectTransform.anchoredPosition;
+        anchoredPosition.x = rightSpaceCenter;
+        rectTransform.anchoredPosition = anchoredPosition;
+
+        Vector2 sizeDelta = rectTransform.sizeDelta;
+        sizeDelta.x = rightSpaceWidth * 0.85f;
+        rectTransform.sizeDelta = sizeDelta;
     }
 
     public static void Clear()

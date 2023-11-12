@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     public void BackToMenu()
     {
+        SudokuHelp.Clear();
+
         transitionsAnimator.Play("TransitionOut");
 
         Invoke(nameof(LoadMenuScene), 1);
